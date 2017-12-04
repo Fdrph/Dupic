@@ -1,10 +1,20 @@
 const {remote, ipcRenderer, shell} = require('electron')
 const fs = require('fs');
+var sharp = require('sharp')
 
 const CurrentWindow = remote.getCurrentWindow()
 
 ipcRenderer.on('print', (ev, m)=>{ console.log(m) });
 
+const units = ['bytes', 'KB', 'MB']
+function niceBytes(x) {
+	let l = 0, n = parseInt(x, 10) || 0;
+	while (n >= 1024) {
+		n = n / 1024;
+		l++;
+	}
+	return (n.toFixed(n >= 10 || l < 1 ? 0 : 1) + ' ' + units[l]);
+}
 
 // ------------------------------ TOP HEADER ------------------------------------
 document.getElementById('close').addEventListener('click', ()=>{ CurrentWindow.close()} );
@@ -41,15 +51,13 @@ function goButton() {
 document.getElementById('delete-selected').addEventListener('click', deleteSelected);
 function deleteSelected() {
 	let imgTable = document.getElementById('image-table');
-	// console.log(imgTable)
 	for (let i = 0; row = imgTable.rows[i]; i++) 
 	{
 		for (let j = 0; cell = row.cells[j]; j++) 
 		{
 			let div = cell.firstChild;
-			// console.log(div)
-			if (div.hasChildNodes() && div.lastChild.id == 'deletion-cross') { 
-				div.innerHTML = "Deleted..."
+			if (div.hasChildNodes() && div.lastChild.id == 'deletion-cross') { 	
+				div.innerHTML = "Deleted...";
 			}
 		}
 	}
@@ -87,16 +95,26 @@ function addRow(groups) {
 		}
 	}
 }
+
 function addeventlisteners(div, img) {
 	
+	img.addEventListener('click', async function (ev) {
+		let imgpath = decodeURI(img.src.substr(8));
+		let size = niceBytes( fs.statSync(imgpath).size );
+		let meta = await sharp(imgpath).metadata();
 
-	img.addEventListener('click', function (ev) {
-		document.getElementById('path-display').innerHTML = decodeURI(img.src.substr(8));
+		// Display image in viewer
 		let t = document.getElementById('image-container');
 		if(t.childElementCount>1) {t.removeChild(t.lastChild)}
 		document.getElementById('image-display').src = img.src;
+
+		// Display image path size and resolution
+		document.getElementById('path-display').innerHTML = imgpath;
+		document.getElementById('size').innerHTML = size;
+		document.getElementById('resolution').innerHTML = meta.width+" x "+meta.height;
 	});
 
+	// Add deletion cross on right click
 	img.addEventListener('contextmenu', function (ev) {
 		ev.preventDefault();
 		if(div.childElementCount<2) {

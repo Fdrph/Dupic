@@ -20,7 +20,6 @@
         <div class="desc">Strict</div>
         <input type="range" min="1" max="10" value="7" class="slider" id="slider-1">
         <div class="desc">Relaxed</div>
-        <!-- <div id="slider-val"></div> -->
         <div id="go-button">Go</div>
         <div id="delete-selected">Delete Marked</div>
     </div>
@@ -30,7 +29,6 @@
             </table>
         </section>
         <section class="section" id="s-2">
-            <!-- <table><tr><td id="image-container">   <img id="image-display"></img>   </td></tr></table> -->
             <div id="image-container">
                 <img id="image-display"></img>
             </div>
@@ -38,7 +36,11 @@
                 <div id="mark">Mark for deletion</div>
                 <div id="locate-disk">Locate on Disk</div>
             </div>
-            <div id="path-display"></div>
+            <div class="image-properties">
+                <div class="image-properties" id="path-display"></div>
+                <div class="image-properties" id="resolution"></div>
+                <div class="image-properties" id="size"></div>
+            </div>
         </section>
     </div>
 

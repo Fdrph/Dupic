@@ -269,16 +269,35 @@ html, body {
 		}
 		#locate-disk:hover { background-color: #505050; }
 
-	#path-display {
-		width: 100%;
+	.image-properties {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
 		height: 30px;
 		background-color: #333333;
 		color: #b1b1b1;
-		font-style: italic;
 		font-size: 14px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		line-height: 30px;
-		cursor: default;
+		font-style: italic;
 	}
+		#path-display {
+			display: inline-block;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			cursor: default;
+			margin-left: 5px;
+			margin-right: 5px;
+			line-height: 30px;
+		}
+		#resolution {
+			justify-content: center;
+			flex-basis: 100px;
+			margin-left: auto;
+		}
+		#size {
+		    justify-content: center;
+			flex-basis: 50px;
+			margin-right: 5px;
+			margin-left: 5px;
+		}
 
