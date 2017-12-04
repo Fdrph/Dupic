@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Dupic</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+  
+<body>
+
+    <header class="title-bar">
+        <div class="win-option" id="close">&#x2716;</div>
+        <div class="win-option" id="maximize">&#x1f5d6;</div>
+        <div class="win-option" id="minimize">&#x1f5d5;</div>
+        <div id="title">Dupic</div>
+    </header>
+    <div class="control-bar">
+        <img src="./assets/folder-icon-white.svg" class="set-folder" id="set-folder" alt="signal" />
+        <div id="current-path"></div>
+        <div class="desc">Strict</div>
+        <input type="range" min="1" max="10" value="7" class="slider" id="slider-1">
+        <div class="desc">Relaxed</div>
+        <!-- <div id="slider-val"></div> -->
+        <div id="go-button">Go</div>
+        <div id="delete-selected">Delete Marked</div>
+    </div>
+    <div class="sections-container">
+        <section class="section" id="s-1">
+            <table id="image-table">
+            </table>
+        </section>
+        <section class="section" id="s-2">
+            <!-- <table><tr><td id="image-container">   <img id="image-display"></img>   </td></tr></table> -->
+            <div id="image-container">
+                <img id="image-display"></img>
+            </div>
+            <div class="buttons">
+                <div id="mark">Mark for deletion</div>
+                <div id="locate-disk">Locate on Disk</div>
+            </div>
+            <div id="path-display"></div>
+        </section>
+    </div>
+
+
+
+
+ <script> require('./renderer.js') </script>
+</body>
+</html>

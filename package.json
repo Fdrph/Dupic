@@ -1,0 +1,36 @@
+{
+  "name": "Dupic",
+  "version": "1.0.0",
+  "description": "A minimal duplicate image finder",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.comn/fdrph",
+  "keywords": [
+    "Electron",
+    "duplicate",
+    "images",
+    "pictures",
+    "photos",
+    "finder",
+    "similar"
+  ],
+  "author": "fdrph",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "1.7.9",
+    "electron-rebuild": "^1.6.0"
+  },
+  "dependencies": {
+    "sharp": "^0.18.4",
+    "blockhash": "^0.2.0",
+    "png-js": "^0.1.1",
+    "jpeg-js": "^0.3.3",
+    "btoa": "^1.1.2",
+    "glob": "^7.1.2",
+    "node": "^9.2.0",
+    "node-gyp": "^3.6.2",
+    "npm": "^5.5.1"
+  }
+}
