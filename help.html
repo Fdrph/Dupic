@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Help</title>
+    <link rel="stylesheet" type="text/css" href="help.css">
+</head>
+
+<body>
+    <header class="title-bar">
+        <div class="win-option" id="close">&#x2716;</div>
+        <!-- <div id="title">Help</div> -->
+    </header>
+
+    <div class="content"> 
+        <video id="video" autoplay loop>
+            <source src="assets/tutorial_video.mp4" type="video/mp4">
+        </video>
+
+        <p class="text">
+            Click the folder icon to select one or more folders. Select how strict you want the perceived difference between images to
+            be. Click Go. 
+        </p>
+        <p class="text">
+            You can right click images on the left pane to mark for deletion. Click "Delete marked" to delete them. 
+        </p>
+        <p class="text">
+            Adjust the strictness of the algorithm again and click Go again. Repeat at hearts content to find all duplicates.
+        </p>
+    </div>
+
+
+
+<script type="text/javascript">
+    const helpWindow = require('./renderer.js').remote.getCurrentWindow()
+    document.getElementById('close').addEventListener('click', () => { helpWindow.close() });
+</script>
+</body>
+</html>

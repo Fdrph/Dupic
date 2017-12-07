@@ -13,7 +13,7 @@ const child = cp.fork( `${__dirname}/findDups.js`)
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
-
+let helpWindow;
 
 // createWindow method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -27,8 +27,8 @@ function createWindow () {
       {
         width: 1280,
         height: 720,
-        minWidth: 800,
-        minHeight: 600,
+        minWidth: 1280,
+        minHeight: 720,
         backgroundColor: '#2e2c29',
         frame: false
       })
@@ -41,10 +41,32 @@ function createWindow () {
       slashes: true
     }))
 
-    mainWindow.on('closed', () => {win=null; child.kill()})
+    mainWindow.on('closed', () => { mainWindow=null; child.kill()})
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
+
+}
+
+function openHelpWindow() {
+    if(helpWindow == null) {    
+        helpWindow = new BrowserWindow(
+            {
+                width: 960,
+                height: 600,
+                resizable: false,
+                parent: mainWindow,
+                backgroundColor: '#2e2c29',
+                frame: false
+            })
+        helpWindow.loadURL(url.format({
+            pathname: path.join(__dirname, 'help.html'),
+            protocol: 'file:',
+            slashes: true
+        }))
+        helpWindow.show();
+        helpWindow.on('closed', () => { helpWindow=null })
+    }
 }
 
 // renderer to main process communications
@@ -58,8 +80,10 @@ function dealWithEvents(event, arg, threshold) {
         case 'go':
             getFileList(threshold);
             break;
+        case 'openhelp':
+            openHelpWindow();
         default:
-            console.log('ERR: NO_OPTION_ASYNC_MESSAGE');
+            
     }
 }
 

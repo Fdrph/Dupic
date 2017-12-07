@@ -1,8 +1,11 @@
 const {remote, ipcRenderer, shell} = require('electron')
-const fs = require('fs');
+const {BrowserWindow} = remote
+const fs = require('fs')
 var sharp = require('sharp')
 
 const CurrentWindow = remote.getCurrentWindow()
+
+
 
 ipcRenderer.on('print', (ev, m)=>{ console.log(m) });
 
@@ -19,8 +22,7 @@ function niceBytes(x) {
 // ------------------------------ TOP HEADER ------------------------------------
 document.getElementById('close').addEventListener('click', ()=>{ CurrentWindow.close()} );
 document.getElementById('minimize').addEventListener('click', ()=>{ CurrentWindow.minimize()} );
-document.getElementById('maximize').addEventListener('click', ()=>
-{
+document.getElementById('maximize').addEventListener('click', ()=>{
 	CurrentWindow.isMaximized() ? CurrentWindow.unmaximize() : CurrentWindow.maximize()
 });
 
@@ -35,10 +37,9 @@ ipcRenderer.on('current-path', (event, path)=>{ document.getElementById('current
 
 // Slider
 var slider = document.getElementById("slider-1");
-// var output = document.getElementById("slider-val");
-// output.innerHTML = slider.value;
-// slider.oninput = function () { output.innerHTML = this.value }
 
+// Open help window
+document.getElementById('help').addEventListener('click', () => { ipcRenderer.send('asynchronous-message', 'openhelp')})
 
 // Go Button
 document.getElementById('go-button').addEventListener('click', goButton);
@@ -73,6 +74,7 @@ ipcRenderer.on('final-dups', (event, groups) => {
 		displayStatus('', "Nothing Found")
 	}
 });
+
 // Display all duplicated found on the left table of images
 function addRow(groups) {
 	let tableRef = document.getElementById('image-table');

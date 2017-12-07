@@ -79,7 +79,6 @@ html, body {
 		font-size: 15px;
 		opacity: 0.8;
 		background-color: #81807e;
-		/* padding: 5px; */
 		border-radius: 2px;
 		overflow: hidden;
 		white-space: nowrap;
@@ -92,7 +91,8 @@ html, body {
 
 		margin-left: 5px;
 		margin-right: 5px;
-		padding: 0;
+		padding-left: 2px;
+		padding-right: 2px;
 		cursor: default;
 	}
 
@@ -117,10 +117,27 @@ html, body {
 		background: #5e5e5e;
 		cursor: pointer;
 	}
+	.desc {
+		color: #c5c5c5;
+	}
+	#help {
+		flex-grow: 0;
+		flex-shrink: 0;
+		margin-left: auto;
+		margin-right: 5px;
+		display: block;
+		height: 25px;
+		width: 25px;
+		border-radius: 100%;
+		border: 1px solid #444444;
+		background-color: #444444;
+		color: #d0d0d0;
+		cursor: pointer;
+	}
+	#help:hover {  background-color: #505050;	}
 	#go-button {
 		background-color: #444444;
 		height: 30px;
-		margin-left: auto;
 		padding: 5px;
 		flex-basis: 70px;
 		flex-grow: 0;
