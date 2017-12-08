@@ -69,10 +69,25 @@ function openHelpWindow() {
     }
 }
 
+// child process to main process communications
+child.on('message', (m) => {
+    switch (m.message) {
+        case 'final-results':
+            mainWindow.webContents.send('final-dups', m.results);
+            break;
+        case 'display-status':
+            mainWindow.webContents.send('current-status', m.status)
+            break;
+        default:
+            console.log("ERROR::CHILD_TO_MAIN::NO_OPTION_FOUND")
+            break;
+    }
+})
+
 // renderer to main process communications
 ipcMain.on('asynchronous-message', dealWithEvents)
-function dealWithEvents(event, arg, threshold) {
-    switch (arg) 
+function dealWithEvents(event, type, threshold, paths) {
+    switch (type) 
     {
         case 'setworkingfolder':
             getDirectories();
@@ -80,10 +95,14 @@ function dealWithEvents(event, arg, threshold) {
         case 'go':
             getFileList(threshold);
             break;
+        case 'delete-selected':
+            child.send({message: 'delete-selected', paths: paths})
+            break;
         case 'openhelp':
             openHelpWindow();
         default:
-            
+            console.log("ERROR::RENDERER_TO_MAIN::NO_OPTION_FOUND")
+            break;
     }
 }
 
@@ -101,70 +120,22 @@ function getDirectories() {
 
 function getFileList(threshold) {
     
-    var len = ACTIVE_DIRS.length
+    var len = ACTIVE_DIRS.length;
     if (len != 0) 
     {
         var files = [];
         for (let i = 0; i < len; i++) {
-            var current_dir = ACTIVE_DIRS[i]
+            var current_dir = ACTIVE_DIRS[i];
             let curr = glob.sync("**/*.+(webp|WEBP|jpg|JPG|jpeg|JPEG|png|PNG|tif|TIF|tiff|TIFF)", { cwd: current_dir })
-            curr = curr.map((value, i)=>{ return path.join(current_dir, value)})
-            files = files.concat(curr)
+            curr = curr.map((value, i)=>{ return path.normalize( path.join(current_dir, value) )})
+            files = files.concat(curr);
         }
-        // sendToConsole(FILES)
-        child.send({ message: 'go', files: files, threshold: threshold })
+        // console.log(files);
+        child.send({ message: 'go', files: files, threshold: threshold });
 
     } else { dialog.showMessageBox({ message: "You must select a path before you start!" }) }
 }
 
 
-// child process to main process communications
-child.on('message', (m) => {
-    switch (m.message) {
-        case 'final-results':
-            mainWindow.webContents.send('final-dups', m.results);
-            break;
-        case 'display-status':
-            mainWindow.webContents.send('current-status', m.status)
-        default:
-            break;
-    }
-})
 
 function sendToConsole(arg) { mainWindow.webContents.send('print', arg) }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-// Quit when all windows are closed.
-app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
-
-app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow()
-  }
-})
-*/
-

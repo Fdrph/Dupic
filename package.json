@@ -23,14 +23,16 @@
     "electron-rebuild": "^1.6.0"
   },
   "dependencies": {
-    "sharp": "^0.18.4",
     "blockhash": "^0.2.0",
-    "png-js": "^0.1.1",
-    "jpeg-js": "^0.3.3",
     "btoa": "^1.1.2",
+    "file-uri-to-path": "^1.0.0",
     "glob": "^7.1.2",
+    "jpeg-js": "^0.3.3",
     "node": "^9.2.0",
     "node-gyp": "^3.6.2",
-    "npm": "^5.5.1"
+    "npm": "^5.5.1",
+    "png-js": "^0.1.1",
+    "sharp": "^0.18.4",
+    "trash": "^4.2.1"
   }
 }

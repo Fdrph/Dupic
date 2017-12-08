@@ -1,6 +1,12 @@
 const sharp = require('sharp');
 const btoa = require('btoa');
 const blockhash = require('blockhash');
+const uri2path = require('file-uri-to-path');
+const path = require('path');
+const fs = require('fs');
+const trash = require('trash');
+
+sharp.cache(false);
 
 const SIZE = 256;
 var threshold = 1;
@@ -22,12 +28,15 @@ process.on('message', (m) => {
         case 'newhashes':
             newHashes = true;
             break;
+        case 'delete-selected':
+            deleteSelected(m.paths);
         default:
             break;
     }
 
 });
 
+// Calculate hamming distance between a and b
 function hd(a, b) {
     var count = 0;
     for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) count++;
@@ -69,7 +78,7 @@ function calculateDistances() {
         for (let i = 0; i < len; i++) {
             for (let j = i+1; j < len; j++) {
                 let t = hd(currentFolderHashes[i].hash, currentFolderHashes[j].hash);
-                if(t < 12) {
+                if(t < 11) {
                     distances.push( [t, currentFolderHashes[i].path, currentFolderHashes[j].path] );
                 }
             }
@@ -85,7 +94,7 @@ function findDups() {
     console.log("SET DISTANCE "+threshold)
     if (distances.length == 0) { 
         process.send({message: 'final-results', results: []}); 
-        return
+        return;
     }
 
     var groups = [[]]
@@ -110,7 +119,29 @@ function findDups() {
         }
     }
 
-    groups = groups.filter( (n)=> n.length>1 && n.length<5 )
+    groups = groups.filter( (n)=>  n.length>1 && n.length<5  )
     process.send( {message: 'final-results', results: groups} )
 }
 
+
+function deleteSelected(paths) {
+    paths = paths.map((value, i) => { return uri2path(value) })
+    // console.log(distances)
+    // console.log(paths)
+    // console.log(" _____________________ ")
+
+    // await trash(paths)
+    
+    for (let i = 0; i < paths.length; i++) {
+        try { fs.unlinkSync(paths[i]) } catch(error) {console.log(error)}
+    }
+
+    distances = distances.filter(function(value) {
+        i_path = path.normalize(value[1]);
+        j_path = path.normalize(value[2]);
+        return !paths.includes(i_path) && !paths.includes(j_path)
+    })
+
+    // console.log(" _____________________ ")
+    // console.log(distances)
+}
