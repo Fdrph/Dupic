@@ -1,10 +1,9 @@
 const {remote, ipcRenderer, shell} = require('electron')
 const {BrowserWindow} = remote
 const fs = require('fs')
-var sharp = require('sharp')
+const sharp = require('sharp')
 
 const CurrentWindow = remote.getCurrentWindow()
-
 
 
 ipcRenderer.on('print', (ev, m)=>{ console.log(m) });
@@ -36,7 +35,7 @@ function setFolderMainProcess() {
 // Set bar to display path user chose
 ipcRenderer.on('current-path', (event, path)=>{ document.getElementById('current-path').innerHTML = path });
 
-// Slider
+// Slider that selects how strict or relaxed the algorithm should be
 var slider = document.getElementById("slider-1");
 
 // Open help window
@@ -50,7 +49,8 @@ function goButton() {
 	ipcRenderer.send('asynchronous-message', 'go', v);
 }
 
-// Delete Selected
+// Delete-Selected button, sends an array with the images to delete to the main process,
+// which sends it to the child process which deletes them
 document.getElementById('delete-selected').addEventListener('click', deleteSelected);
 function deleteSelected() {
 
@@ -77,8 +77,8 @@ function deleteSelected() {
 // ---------------------------------- Image Table ----------------------------------
 ipcRenderer.on('final-dups', (event, groups) => {
 	if(groups.length != 0) {
-		displayStatus('', "Done")
 		addRow(groups)
+		displayStatus('', "Done")
 	} else {
 		displayStatus('', "Nothing Found")
 	}
@@ -87,7 +87,7 @@ ipcRenderer.on('final-dups', (event, groups) => {
 // Display all duplicate images on the left pane table of images
 function addRow(groups) {
 	let tableRef = document.getElementById('image-table');
-	console.log(groups)
+	// console.log(groups)
 
 	for (let row of groups) 
 	{
@@ -141,6 +141,22 @@ function addeventlisteners(div, img) {
 }
 
 // ------------------------------ Right Image Display ------------------------------
+// Mark for deletion button
+document.getElementById('mark').addEventListener('click', markForDeletion);
+function markForDeletion() {
+	var rightClick = new CustomEvent('contextmenu');
+	var imageToMark = displayedImg.src;
+	var table = document.getElementById('image-table');
+	for (let row of table.rows) 
+	{
+		for (let cell of row.cells) 
+		{
+			let img = cell.firstChild.firstChild;
+			if(img.src == imageToMark) { img.dispatchEvent(rightClick) }
+		}
+	}
+}
+
 // Show item in folder
 let displayedImg = document.getElementById('image-display');
 document.getElementById('locate-disk').addEventListener('click', ()=>{

@@ -1,12 +1,18 @@
 {
+  "build": {
+    "appId": "Fdrph.Dupic"
+  },
   "name": "Dupic",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A minimal duplicate image finder",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "postinstall": "electron-builder install-app-deps",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
-  "repository": "https://github.comn/fdrph",
+  "repository": "https://github.comn/fdrph/Dupic",
   "keywords": [
     "Electron",
     "duplicate",
@@ -16,15 +22,15 @@
     "finder",
     "similar"
   ],
-  "author": "fdrph",
-  "license": "CC0-1.0",
+  "author": "Filipe Henriques <filipe.p.henriques@tecnico.ulisboa.pt> (https://github.com/Fdrph)",
+  "license": "CC-BY-NC-4.0",
   "devDependencies": {
     "electron": "1.7.9",
+    "electron-builder": "^19.48.3",
     "electron-rebuild": "^1.6.0"
   },
   "dependencies": {
     "blockhash": "^0.2.0",
-    "btoa": "^1.1.2",
     "file-uri-to-path": "^1.0.0",
     "glob": "^7.1.2",
     "jpeg-js": "^0.3.3",

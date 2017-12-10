@@ -1,5 +1,4 @@
 const sharp = require('sharp');
-const btoa = require('btoa');
 const blockhash = require('blockhash');
 const uri2path = require('file-uri-to-path');
 const path = require('path');
@@ -10,15 +9,15 @@ sharp.cache(false);
 
 const SIZE = 256;
 var threshold = 1;
-var newHashes;
-var newDistances;
-var currentFolderHashes;
+var newHashes = true;
+var currentFolderHashes = [];
 var distances = [];
 function IMAGE(path, hash) {
     this.path = path;
     this.hash = hash;
 }
 
+// Receives and deals with messages from main process
 process.on('message', (m) => {
     switch (m.message) {
         case 'go':
@@ -33,7 +32,6 @@ process.on('message', (m) => {
         default:
             break;
     }
-
 });
 
 // Calculate hamming distance between a and b
@@ -43,7 +41,7 @@ function hd(a, b) {
     return count;
 }
 
-
+// Generates hashes for all the files in the folders given and stores the results in currentFolderHashes
 async function generateHashes(files) {
 
     if (newHashes) {
@@ -56,23 +54,22 @@ async function generateHashes(files) {
             }).then((info) => {
                 return image.resize(SIZE, SIZE, { interpolator: sharp.interpolator.bilinear })
                     .raw().toBuffer().then((buff) => { return blockhash.blockhashData({ width: SIZE, height: SIZE, data: buff }, 16, 1) })
-            })
+            }).catch((reason)=>{console.log(reason)})
         }
         let temp = files.map(fn);
         let results = await Promise.all(temp);
         currentFolderHashes = results.map((value, i) => { return new IMAGE(files[i], value) });
-        newHashes = false;
-        newDistances = true;
     }
-    
     calculateDistances()
 }
 
-
+// Runs after generateHashes, analyses currentFolderHashes and makes N^2 / 2 comparisons, storing only the matches 
+// that have a hamming distance less than 11 in an array of arrays called distances
+// [ [distance, i_path, J_path] , ...]
 function calculateDistances() {
     process.send( { message: 'display-status', status: 'Finding Duplicates...' } );
 
-    if(newDistances) {
+    if (newHashes) {
         var len = currentFolderHashes.length;
         distances = [];
         for (let i = 0; i < len; i++) {
@@ -83,15 +80,19 @@ function calculateDistances() {
                 }
             }
         }
-        console.log('WE CALCULATED NEW DISTANCES | number of saved: '+ distances.length)
-        newDistances = false;
+        
+        newHashes = false;
         currentFolderHashes = null;
     }
     findDups();
 }
 
+// Filters the array distances, with the given threshold(strict or relaxed)
+// Stores the results in a different format, an array of arrays, with each subarray representing a "group"
+// A group is made of similar images, which when displayed becomes a row on the table
+// Sends the results to be displayed to the main process, which sends it to the renderer
 function findDups() {
-    console.log("SET DISTANCE "+threshold)
+    // console.log("SET DISTANCE "+threshold)
     if (distances.length == 0) { 
         process.send({message: 'final-results', results: []}); 
         return;
@@ -108,11 +109,11 @@ function findDups() {
         if(distances[i][0] < threshold) {
             if (!groups[gi]) { groups[gi] = [] }
             j_path = distances[i][2];
-            if (groups[gi].indexOf(i_path) < 0 && temp.indexOf(i_path) < 0) {
+            if (!groups[gi].includes(i_path) && !temp.includes(i_path)) {
                 groups[gi].push(i_path);
                 temp.push(i_path)
             }
-            if (temp.indexOf(j_path) < 0) {
+            if (!temp.includes(j_path)) {
                 groups[gi].push(j_path);
                 temp.push(j_path)
             }
@@ -123,14 +124,10 @@ function findDups() {
     process.send( {message: 'final-results', results: groups} )
 }
 
-
+// Receives an array of paths to delete, deletes them from the computer and
+// removes them from the array of stored duplicates (called distances)
 function deleteSelected(paths) {
     paths = paths.map((value, i) => { return uri2path(value) })
-    // console.log(distances)
-    // console.log(paths)
-    // console.log(" _____________________ ")
-
-    // await trash(paths)
     
     for (let i = 0; i < paths.length; i++) {
         try { fs.unlinkSync(paths[i]) } catch(error) {console.log(error)}
@@ -142,6 +139,4 @@ function deleteSelected(paths) {
         return !paths.includes(i_path) && !paths.includes(j_path)
     })
 
-    // console.log(" _____________________ ")
-    // console.log(distances)
 }

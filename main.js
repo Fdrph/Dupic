@@ -9,6 +9,7 @@ const cp = require('child_process')
 
 const child = cp.fork( `${__dirname}/findDups.js`)
 
+function sendToConsole(arg) { mainWindow.webContents.send('print', arg) }
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -19,6 +20,7 @@ let helpWindow;
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
+app.on('window-all-closed', ()=>{  app.quit()  });
 
 function createWindow () {
 
@@ -100,6 +102,7 @@ function dealWithEvents(event, type, threshold, paths) {
             break;
         case 'openhelp':
             openHelpWindow();
+            break;
         default:
             console.log("ERROR::RENDERER_TO_MAIN::NO_OPTION_FOUND")
             break;
@@ -137,5 +140,3 @@ function getFileList(threshold) {
 }
 
 
-
-function sendToConsole(arg) { mainWindow.webContents.send('print', arg) }
