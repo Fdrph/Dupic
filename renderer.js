@@ -19,9 +19,17 @@ function niceBytes(x) {
 }
 
 // ------------------------------ TOP HEADER ------------------------------------
-document.getElementById('close').addEventListener('click', ()=>{ CurrentWindow.close()} );
-document.getElementById('minimize').addEventListener('click', ()=>{ CurrentWindow.minimize()} );
-document.getElementById('maximize').addEventListener('click', ()=>{
+var close = document.getElementById('close')
+var minimize = document.getElementById('minimize')
+var maximize = document.getElementById('maximize')
+if(process.platform == "darwin") {
+	close.innerHTML = "X";
+	document.body.style.fontFamily = "sans-serif";
+	document.body.style.font = "normal";
+}
+close.addEventListener('click', ()=>{ CurrentWindow.close()} );
+minimize.addEventListener('click', ()=>{ CurrentWindow.minimize()} );
+maximize.addEventListener('click', ()=>{
 	CurrentWindow.isMaximized() ? CurrentWindow.unmaximize() : CurrentWindow.maximize()
 });
 
@@ -112,6 +120,7 @@ function addeventlisteners(div, img) {
 	// Left click
 	img.addEventListener('click', async function (ev) {
 		let imgpath = decodeURI( img.src.substr(8) );
+		if(process.platform == 'darwin') {imgpath = "/"+imgpath}
 		let size = niceBytes( fs.statSync(imgpath).size );
 		let meta = await sharp(imgpath).metadata();
 

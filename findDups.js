@@ -57,7 +57,7 @@ async function generateHashes(files) {
             }).catch((reason)=>{console.log(reason)})
         }
         let temp = files.map(fn);
-        let results = await Promise.all(temp);
+        let results = await Promise.all(temp).catch((reason)=>{console.log(reason)});
         currentFolderHashes = results.map((value, i) => { return new IMAGE(files[i], value) });
     }
     calculateDistances()
