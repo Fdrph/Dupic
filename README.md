@@ -5,7 +5,7 @@ Simple, minimal similar/duplicate image finder and cleaner that supports PNG, JP
 Despite being simple, Dupic is faster and easier to use than a lot of commercial software.
 
 
-![Alt Text](https://imgur.com/DhxB5Fp.gif)
+![Alt Text](https://i.imgur.com/EXJCA2z.gif)
 
 ### Installation
 
