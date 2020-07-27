@@ -33,7 +33,7 @@
     "blockhash": "^0.2.0",
     "file-uri-to-path": "^1.0.0",
     "glob": "^7.1.2",
-    "jpeg-js": "^0.3.3",
+    "jpeg-js": "^0.4.1",
     "node": "^9.2.0",
     "node-gyp": "^3.6.2",
     "npm": "^5.5.1",
